@@ -234,3 +234,6 @@ elif tab == "Client Risk Segmentation":
     )
 
     st.dataframe(datatable[['client', 'annual_inc', 'term', 'loan_amnt', 'home_ownership', 'delinq_2yrs', 'probability_of_default', 'int_rate', 'suggested_interest_rate']])
+
+if __name__ == '__main__':
+    st.run()
