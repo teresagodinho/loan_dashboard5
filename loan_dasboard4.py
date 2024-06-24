@@ -60,12 +60,13 @@ data.sort_values(by='probability_of_default', ascending=False, inplace=True)
 # Streamlit app
 st.title("Loan Default Prediction Dashboard")
 
-# Main Page
-if st.sidebar.button('Main Page'):
-    st.write("This dashboard helps a US loan mortgage company identify and manage at-risk clients...")
+# Sidebar for navigation
+st.sidebar.title("Navigation")
+tabs = st.sidebar.radio("Tabs", ["Main Page", "Background Information", "New Client Default Prediction", "Client Risk Segmentation"])
 
-# Background Information
-if st.sidebar.button('Background Information'):
+if tabs == "Main Page":
+    st.write("This dashboard helps a US loan mortgage company identify and manage at-risk clients...")
+elif tabs == "Background Information":
     st.write("Explore various graphs that describe our dataset...")
 
     option = st.selectbox(
@@ -75,18 +76,40 @@ if st.sidebar.button('Background Information'):
 
     if option == 'Correlation Heatmap':
         correlation_matrix = data.corr()
-        fig = px.imshow(correlation_matrix,
+        fig = px.imshow(correlation_matrix, 
                         labels={'color':'Correlation'},
-                        x=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income',
-                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts', 'Loan Status'],
-                        y=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income',
-                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts', 'Loan Status'],
+                        x=correlation_matrix.columns,
+                        y=correlation_matrix.columns,
                         color_continuous_scale='RdBu_r')
         fig.update_layout(title='Correlation Heatmap')
         st.plotly_chart(fig)
 
-# New Client Default Prediction
-if st.sidebar.button('New Client Default Prediction'):
+    elif option == 'Distribution of Loan Status':
+        loan_status_counts = data['loan_status'].value_counts().reset_index()
+        loan_status_counts.columns = ['Loan Status', 'Count']
+        fig = px.bar(loan_status_counts, 
+                     x='Loan Status', 
+                     y='Count',
+                     labels={'Loan Status': 'Loan Status', 'Count': 'Number of Loans'},
+                     title='Distribution of Loan Status')
+        st.plotly_chart(fig)
+
+    elif option == 'Distribution of Loan Amounts':
+        fig = px.histogram(data, x='loan_amnt', nbins=50, title='Distribution of Loan Amounts')
+        fig.update_layout(xaxis_title='Loan Amount ($)', yaxis_title='Count')
+        st.plotly_chart(fig)
+
+    elif option == 'Distribution of Annual Incomes':
+        fig = px.histogram(data, x='annual_inc', nbins=50, title='Distribution of Annual Incomes')
+        fig.update_layout(xaxis_title='Annual Income ($)', yaxis_title='Count')
+        st.plotly_chart(fig)
+
+    elif option == 'Distribution of Interest Rates':
+        fig = px.histogram(data, x='int_rate', nbins=50, title='Distribution of Interest Rates')
+        fig.update_layout(xaxis_title='Interest Rate (%)', yaxis_title='Count')
+        st.plotly_chart(fig)
+
+elif tabs == "New Client Default Prediction":
     st.write("Enter your information to receive a personalized loan recommendation...")
 
     annual_income = st.number_input('Annual Income', min_value=0, max_value=1000000, value=120000)
@@ -129,12 +152,12 @@ if st.sidebar.button('New Client Default Prediction'):
             st.write(probability)
             st.write(recommended_rate)
 
-# Client Risk Segmentation
-if st.sidebar.button('Client Risk Segmentation'):
+elif tabs == "Client Risk Segmentation":
     st.write("Client Risk Segmentation Analysis...")
-    risk_levels = data.pivot_table(values='loan_status',
-                                   index=pd.cut(data['loan_amnt'], bins=range(0, 105000, 5000)),
-                                   columns=pd.cut(data['annual_inc'], bins=range(0, 1050000, 50000)),
+
+    risk_levels = data.pivot_table(values='loan_status', 
+                                   index=pd.cut(data['loan_amnt'], bins=range(0, 105000, 5000)), 
+                                   columns=pd.cut(data['annual_inc'], bins=range(0, 1050000, 50000)), 
                                    aggfunc='mean')
     risk_levels = risk_levels.fillna(0)
 
@@ -156,6 +179,7 @@ if st.sidebar.button('Client Risk Segmentation'):
     )
 
     st.plotly_chart(fig)
+
     datatable = data[data['probability_of_default'] < 1].assign(
         client=lambda x: x.index + 1,
         home_ownership=lambda x: x['home_ownership_OWN'].map({1: 'OWN', 0: 'RENT'}),
@@ -164,4 +188,4 @@ if st.sidebar.button('Client Risk Segmentation'):
         ).round(2)
     )
 
-    st.dataframe(datatable[['client', 'annual_inc', 'term', 'loan_amnt', 'home_ownership', 'delinq_2yrs', 'probability_of_default']])
+    st.dataframe(datatable[['client', 'annual_inc', 'term', 'loan_amnt', 'home_ownership', 'delinq_2yrs', 'probability_of_default', 'suggested_interest_rate']])
