@@ -57,7 +57,7 @@ selected_tab = st.sidebar.radio("Tabs", tabs)
 
 if selected_tab == "Main Page":
     st.write("""
-    # Loan Default Prediction Dashboard
+    # LendSmart
     This dashboard helps a US loan mortgage company identify and manage at-risk clients. Using machine learning models and statistical analysis, it predicts loan defaults and provides actionable insights. Amid rising US mortgage delinquency rates due to economic uncertainty (Financial Times), this tool enables early identification of potential defaults and better management of at-risk clients, ensuring financial stability and improved loan portfolio management.
     """)
 
