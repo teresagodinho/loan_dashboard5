@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
 # Load the dataset
-data = pd.read_csv('/Users/teresagodinho/Desktop/loan/loan_balanced_6040.csv')
+data = pd.read_csv('loan_balanced_6040.csv'))
 
 # Data preprocessing
 X = data[['annual_inc', 'term', 'loan_amnt', 'home_ownership_OWN']]
