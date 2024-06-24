@@ -149,7 +149,7 @@ elif selected_tab == "Client Risk Segmentation":
                                    aggfunc='mean')
     risk_levels = risk_levels.fillna(0)  # fill NaNs with zeros
 
-    x_labels = [f"${i*5000}" for i in range(21)]  # generate loan amount bins labels
+    x_labels = [f"${i*50000}" for i in range(21)]  # generate loan amount bins labels
     y_labels = [f"${i*50000}" for i in range(21)]  # generate annual income bins labels
 
     heatmap = px.imshow(
