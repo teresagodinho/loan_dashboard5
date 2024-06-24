@@ -54,8 +54,7 @@ kmeans = KMeans(n_clusters=4, random_state=42)
 data['cluster'] = kmeans.fit_predict(data_scaled)
 
 # Compute default probabilities for each client using the Random Forest Classifier
-data['probability_of_default'] = model.predict_proba(data[['annual_inc', 'term', 'loan_amnt', 'home_ownership_OWN']])[:,
-                                 1]
+data['probability_of_default'] = model.predict_proba(data[['annual_inc', 'term', 'loan_amnt', 'home_ownership_OWN']])[:, 1]
 data.sort_values(by='probability_of_default', ascending=False, inplace=True)
 
 # Initialize the Streamlit app
@@ -69,8 +68,7 @@ st.write(
 )
 
 # Navigation tabs
-tab = st.sidebar.radio("Navigation", ["Main Page", "Background Information", "New Client Default Prediction",
-                                      "Client Risk Segmentation"])
+tab = st.sidebar.radio("Navigation", ["Main Page", "Background Information", "New Client Default Prediction", "Client Risk Segmentation"])
 
 if tab == "Main Page":
     st.write(
@@ -90,48 +88,44 @@ elif tab == "Background Information":
         Gain insights into loan distributions, income levels, interest rates, and more.
         """
     )
-    dropdown_selection = st.selectbox("Choose a graph to display:",
-                                      ["Correlation Heatmap", "Distribution of Loan Status",
-                                       "Distribution of Loan Amounts",
+    dropdown_selection = st.selectbox("Choose a graph to display:", 
+                                      ["Correlation Heatmap", "Distribution of Loan Status", "Distribution of Loan Amounts", 
                                        "Distribution of Annual Incomes", "Distribution of Interest Rates"])
-
+    
     if dropdown_selection == 'Correlation Heatmap':
-        correlation_matrix = data[['loan_amnt', 'term', 'int_rate', 'installment', 'annual_inc',
-                                   'delinq_2yrs', 'home_ownership_OWN', 'home_ownership_RENT', 'open_acc',
-                                   'loan_status']].corr()
-        fig = px.imshow(correlation_matrix,
-                        labels={'color': 'Correlation'},
-                        x=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income',
-                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts',
-                           'Loan Status'],
-                        y=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income',
-                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts',
-                           'Loan Status'],
+        correlation_matrix = data[['loan_amnt', 'term', 'int_rate', 'installment', 'annual_inc', 
+                                   'delinq_2yrs', 'home_ownership_OWN', 'home_ownership_RENT', 'open_acc', 'loan_status']].corr()
+        fig = px.imshow(correlation_matrix, 
+                        labels={'color':'Correlation'},
+                        x=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income', 
+                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts', 'Loan Status'],
+                        y=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income', 
+                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts', 'Loan Status'],
                         color_continuous_scale='RdBu_r')
-        fig.update_layout(title='Correlation Heatmap')
+        fig.update_layout(title='Correlation Heatmap', autosize=False, width=800, height=800)
         st.plotly_chart(fig)
-
+    
     elif dropdown_selection == 'Distribution of Loan Status':
         loan_status_counts = data['loan_status'].value_counts().reset_index()
         loan_status_counts.columns = ['Loan Status', 'Count']
-        fig = px.bar(loan_status_counts,
-                     x='Loan Status',
+        fig = px.bar(loan_status_counts, 
+                     x='Loan Status', 
                      y='Count',
                      labels={'Loan Status': 'Loan Status', 'Count': 'Number of Loans'},
                      title='Distribution of Loan Status')
         st.plotly_chart(fig)
-
+    
     elif dropdown_selection == 'Distribution of Loan Amounts':
         fig = px.histogram(data, x='loan_amnt', nbins=50, title='Distribution of Loan Amounts')
         fig.update_layout(xaxis_title='Loan Amount ($)', yaxis_title='Count')
         st.plotly_chart(fig)
-
-    elif dropdown_selection == 'Annual Incomes':
+    
+    elif dropdown_selection == 'Distribution of Annual Incomes':
         fig = px.histogram(data, x='annual_inc', nbins=50, title='Distribution of Annual Incomes')
         fig.update_layout(xaxis_title='Annual Income ($)', yaxis_title='Count')
         st.plotly_chart(fig)
-
-    elif dropdown_selection == 'Interest Rates':
+    
+    elif dropdown_selection == 'Distribution of Interest Rates':
         fig = px.histogram(data, x='int_rate', nbins=50, title='Distribution of Interest Rates')
         fig.update_layout(xaxis_title='Interest Rate (%)', yaxis_title='Count')
         st.plotly_chart(fig)
@@ -151,7 +145,7 @@ elif tab == "New Client Default Prediction":
     home_ownership = 1 if home_ownership == "OWN" else 0
     open_acc = st.number_input("Number of Open Accounts", min_value=0, value=5)
     delinq_2yrs = st.number_input("Delinquencies in Last 2 Years", min_value=0, value=0)
-
+    
     if st.button("Predict"):
         input_data = pd.DataFrame({
             'annual_inc': [annual_income],
@@ -165,7 +159,7 @@ elif tab == "New Client Default Prediction":
 
         if prediction[0] == 1:
             st.write("Loan Denied")
-            st.write(f"{prediction_proba[0][1] * 100:.2f}% probability of default")
+            st.write(f"{prediction_proba[0][1]*100:.2f}% probability of default")
             st.write(
                 """
                 - Reduce Loan Amount: A lower loan amount reduces the repayment burden, which can decrease the risk of default.
@@ -174,8 +168,8 @@ elif tab == "New Client Default Prediction":
             )
         else:
             st.write("Loan Accepted")
-            st.write(f"{prediction_proba[0][1] * 100:.2f}% probability of default")
-
+            st.write(f"{prediction_proba[0][1]*100:.2f}% probability of default")
+            
             input_data_for_rate = pd.DataFrame({
                 'loan_amnt': [loan_amount],
                 'open_acc': [open_acc],
@@ -196,14 +190,14 @@ elif tab == "Client Risk Segmentation":
         """
     )
 
-    risk_levels = data.pivot_table(values='loan_status',
-                                   index=pd.cut(data['loan_amnt'], bins=range(0, 105000, 5000)),
-                                   columns=pd.cut(data['annual_inc'], bins=range(0, 1050000, 50000)),
+    risk_levels = data.pivot_table(values='loan_status', 
+                                   index=pd.cut(data['loan_amnt'], bins=range(0, 105000, 5000)), 
+                                   columns=pd.cut(data['annual_inc'], bins=range(0, 1050000, 50000)), 
                                    aggfunc='mean')
     risk_levels = risk_levels.fillna(0)  # fill NaNs with zeros
 
-    x_labels = [f"${i * 5000}" for i in range(21)]  # generate loan amount bins labels
-    y_labels = [f"${i * 50000}" for i in range(21)]  # generate annual income bins labels
+    x_labels = [f"${i*5000}" for i in range(21)]  # generate loan amount bins labels
+    y_labels = [f"${i*50000}" for i in range(21)]  # generate annual income bins labels
 
     heatmap = px.imshow(
         risk_levels.values,
@@ -239,8 +233,4 @@ elif tab == "Client Risk Segmentation":
         ).round(2)
     )
 
-    st.dataframe(datatable[['client', 'annual_inc', 'term', 'loan_amnt', 'home_ownership', 'delinq_2yrs',
-                            'probability_of_default', 'int_rate', 'suggested_interest_rate']])
-
-if __name__ == '__main__':
-    st.run()
+    st.dataframe(datatable[['client', 'annual_inc', 'term', 'loan_amnt', 'home_ownership', 'delinq_2yrs', 'probability_of_default', 'int_rate', 'suggested_interest_rate']])
