@@ -9,6 +9,9 @@ import plotly.express as px
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
+# Set Streamlit page configuration
+st.set_page_config(layout="wide")
+
 # Load the dataset
 data = pd.read_csv('loan_balanced_6040.csv')
 
@@ -57,44 +60,39 @@ data['cluster'] = kmeans.fit_predict(data_scaled)
 data['probability_of_default'] = model.predict_proba(data[['annual_inc', 'term', 'loan_amnt', 'home_ownership_OWN']])[:, 1]
 data.sort_values(by='probability_of_default', ascending=False, inplace=True)
 
-# Streamlit app
+# Define the layout of the app
 st.title("Loan Default Prediction Dashboard")
-
-# Sidebar for navigation
 st.sidebar.title("Navigation")
-tabs = st.sidebar.radio("Tabs", ["Main Page", "Background Information", "New Client Default Prediction", "Client Risk Segmentation"])
+tabs = ["Main Page", "Background Information", "New Client Default Prediction", "Client Risk Segmentation"]
+selected_tab = st.sidebar.radio("Tabs", tabs)
 
-if tabs == "Main Page":
+if selected_tab == "Main Page":
     st.write("""
-        ## Main Page
-        This dashboard helps a US loan mortgage company identify and manage at-risk clients. 
-        Using machine learning models and statistical analysis, it predicts loan defaults and provides actionable insights. 
-        Amid rising US mortgage delinquency rates due to economic uncertainty (Financial Times), this tool enables early identification of potential defaults 
-        and better management of at-risk clients, ensuring financial stability and improved loan portfolio management.
-    """)
-elif tabs == "Background Information":
-    st.write("""
-        ## Background Information
-        Explore various graphs that describe our dataset, which underpins the predictive tools used in the following tabs. 
-        Gain insights into loan distributions, income levels, interest rates, and more.
+    # Loan Default Prediction Dashboard
+    This dashboard helps a US loan mortgage company identify and manage at-risk clients. Using machine learning models and statistical analysis, it predicts loan defaults and provides actionable insights. Amid rising US mortgage delinquency rates due to economic uncertainty (Financial Times), this tool enables early identification of potential defaults and better management of at-risk clients, ensuring financial stability and improved loan portfolio management.
     """)
 
-    option = st.selectbox(
-        'Select a graph to display',
-        ('Correlation Heatmap', 'Distribution of Loan Status', 'Distribution of Loan Amounts', 'Distribution of Annual Incomes', 'Distribution of Interest Rates')
-    )
-
-    if option == 'Correlation Heatmap':
-        correlation_matrix = data.corr()
+elif selected_tab == "Background Information":
+    st.write("""
+    # Background Information
+    Explore various graphs that describe our dataset, which underpins the predictive tools used in the following tabs. Gain insights into loan distributions, income levels, interest rates, and more.
+    """)
+    
+    dropdown_selection = st.selectbox("Select a graph", ["Correlation Heatmap", "Distribution of Loan Status", "Distribution of Loan Amounts", "Distribution of Annual Incomes", "Distribution of Interest Rates"])
+    
+    if dropdown_selection == "Correlation Heatmap":
+        correlation_matrix = data[['loan_amnt', 'term', 'int_rate', 'installment', 'annual_inc', 
+                                   'delinq_2yrs', 'home_ownership_OWN', 'home_ownership_RENT', 'open_acc', 'loan_status']].corr()
         fig = px.imshow(correlation_matrix, 
                         labels={'color':'Correlation'},
-                        x=correlation_matrix.columns,
-                        y=correlation_matrix.columns,
+                        x=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income', 
+                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts', 'Loan Status'],
+                        y=['Loan Amount', 'Loan Term', 'Interest Rate', 'Installment', 'Annual Income', 
+                           'Delinquency in the Last 2 Years', 'Home Owner', 'Home Renter', 'Number of Open Accounts', 'Loan Status'],
                         color_continuous_scale='RdBu_r')
         fig.update_layout(title='Correlation Heatmap')
         st.plotly_chart(fig)
-
-    elif option == 'Distribution of Loan Status':
+    elif dropdown_selection == "Distribution of Loan Status":
         loan_status_counts = data['loan_status'].value_counts().reset_index()
         loan_status_counts.columns = ['Loan Status', 'Count']
         fig = px.bar(loan_status_counts, 
@@ -103,39 +101,32 @@ elif tabs == "Background Information":
                      labels={'Loan Status': 'Loan Status', 'Count': 'Number of Loans'},
                      title='Distribution of Loan Status')
         st.plotly_chart(fig)
-
-    elif option == 'Distribution of Loan Amounts':
+    elif dropdown_selection == "Distribution of Loan Amounts":
         fig = px.histogram(data, x='loan_amnt', nbins=50, title='Distribution of Loan Amounts')
         fig.update_layout(xaxis_title='Loan Amount ($)', yaxis_title='Count')
         st.plotly_chart(fig)
-
-    elif option == 'Distribution of Annual Incomes':
+    elif dropdown_selection == "Distribution of Annual Incomes":
         fig = px.histogram(data, x='annual_inc', nbins=50, title='Distribution of Annual Incomes')
         fig.update_layout(xaxis_title='Annual Income ($)', yaxis_title='Count')
         st.plotly_chart(fig)
-
-    elif option == 'Interest Rates':
+    elif dropdown_selection == "Distribution of Interest Rates":
         fig = px.histogram(data, x='int_rate', nbins=50, title='Distribution of Interest Rates')
         fig.update_layout(xaxis_title='Interest Rate (%)', yaxis_title='Count')
         st.plotly_chart(fig)
 
-elif tabs == "New Client Default Prediction":
+elif selected_tab == "New Client Default Prediction":
     st.write("""
-        ## New Client Default Prediction
-        Enter your information to receive a personalized loan recommendation in seconds. 
-        Our tool quickly evaluates your eligibility, helping you save time and determine the feasibility of your loan application. 
-        If your loan is denied, you will receive a recommendation. If your loan is approved, we will suggest an interest rate.
+    # New Client Default Prediction
+    Enter your information to receive a personalized loan recommendation in seconds. Our tool quickly evaluates your eligibility, helping you save time and determine the feasibility of your loan application. If your loan is denied, you will receive a recommendation. If your loan is approved, we will suggest an interest rate.
     """)
-
-    annual_income = st.number_input('Annual Income', min_value=0, max_value=1000000, value=120000)
-    loan_term = st.number_input('Loan Term (months)', min_value=1, max_value=360, value=36)
-    loan_amount = st.number_input('Loan Amount', min_value=0, max_value=1000000, value=300000)
-    home_ownership = st.selectbox('Home Ownership', ['OWN', 'RENT'])
-    home_ownership = 1 if home_ownership == 'OWN' else 0
-    open_acc = st.number_input('Number of Open Accounts', min_value=0, max_value=50, value=5)
-    delinq_2yrs = st.selectbox('Delinquencies in Last 2 Years', ['YES', 'NO'])
-    delinq_2yrs = 1 if delinq_2yrs == 'YES' else 0
-
+    
+    annual_income = st.number_input('Annual Income', value=120000, min_value=0, max_value=1000000)
+    loan_term = st.number_input('Loan Term (months)', value=36, min_value=1, max_value=360)
+    loan_amount = st.number_input('Loan Amount', value=300000, min_value=0, max_value=1000000)
+    home_ownership = st.number_input('Home Ownership (OWN=1, RENT=0)', value=1, min_value=0, max_value=1)
+    open_acc = st.number_input('Number of Open Accounts', value=5, min_value=0, max_value=50)
+    delinq_2yrs = st.number_input('Delinquencies in Last 2 Years 1=YES 0=NO', value=0, min_value=0, max_value=50)
+    
     if st.button('Predict'):
         input_data = pd.DataFrame({
             'annual_inc': [annual_income],
@@ -148,49 +139,52 @@ elif tabs == "New Client Default Prediction":
         prediction_proba = model.predict_proba(input_data)
 
         if prediction[0] == 1:
-            result = 'Loan Denied'
-            probability = f"{prediction_proba[0][1]*100:.2f}% probability of default"
-            st.write(result)
-            st.write(probability)
+            st.write('Loan Denied')
+            st.write(f"{prediction_proba[0][1]*100:.2f}% probability of default")
+            st.write('Recommendations')
+            st.write("""
+            - Reduce Loan Amount: A lower loan amount reduces the repayment burden, which can decrease the risk of default.
+            - Extend Loan Term: Smaller monthly payments can be easier to manage, reducing the risk of default.
+            """)
         else:
-            result = 'Loan Accepted'
-            probability = f"{prediction_proba[0][1]*100:.2f}% probability of default"
+            st.write('Loan Accepted')
+            st.write(f"{prediction_proba[0][1]*100:.2f}% probability of default")
+
+            # Predict the interest rate using the linear regression model
             input_data_for_rate = pd.DataFrame({
                 'loan_amnt': [loan_amount],
                 'open_acc': [open_acc],
                 'delinq_2yrs': [delinq_2yrs],
                 'term': [loan_term]
             })
+
             predicted_rate = lin_reg_model.predict(input_data_for_rate)
-            recommended_rate = f"The suggested interest rate is {predicted_rate[0]:.2f}%."
-            st.write(result)
-            st.write(probability)
-            st.write(recommended_rate)
+            st.write(f"The suggested interest rate is {predicted_rate[0]:.2f}%.")
 
-elif tabs == "Client Risk Segmentation":
+elif selected_tab == "Client Risk Segmentation":
     st.write("""
-        ## Client Risk Segmentation
-        This heatmap visualizes the risk segmentation of clients based on their loan amounts and annual incomes. 
-        Each cell represents the default probability for a specific segment, with colors ranging from green (low risk) to red (high risk). 
-        By analyzing this heatmap, we can identify which client segments are more likely to default on their loans, 
-        allowing for better risk management and targeted strategies.
+    # Client Risk Segmentation Analysis
+    This heatmap visualizes the risk segmentation of clients based on their loan amounts and annual incomes. Each cell represents the default probability for a specific segment, with colors ranging from green (low risk) to red (high risk). By analyzing this heatmap, we can identify which client segments are more likely to default on their loans, allowing for better risk management and targeted strategies.
     """)
-
+    
     risk_levels = data.pivot_table(values='loan_status', 
                                    index=pd.cut(data['loan_amnt'], bins=range(0, 105000, 5000)), 
                                    columns=pd.cut(data['annual_inc'], bins=range(0, 1050000, 50000)), 
                                    aggfunc='mean')
-    risk_levels = risk_levels.fillna(0)
+    risk_levels = risk_levels.fillna(0)  # fill NaNs with zeros
 
-    fig = px.imshow(
+    x_labels = [f"${i*5000}" for i in range(21)]  # generate loan amount bins labels
+    y_labels = [f"${i*50000}" for i in range(21)]  # generate annual income bins labels
+
+    heatmap = px.imshow(
         risk_levels.values,
         labels=dict(x="Loan Amount", y="Annual Income", color="Default Probability"),
-        x=[f"${i*5000}" for i in range(risk_levels.shape[1])],
-        y=[f"${i*50000}" for i in range(risk_levels.shape[0])],
+        x=x_labels[:risk_levels.shape[1]],
+        y=y_labels[:risk_levels.shape[0]],
         color_continuous_scale='RdYlGn_r',
     )
 
-    fig.update_layout(
+    heatmap.update_layout(
         title='Client Risk Segmentation Heatmap',
         xaxis_title='Loan Amount',
         yaxis_title='Annual Income',
@@ -198,16 +192,14 @@ elif tabs == "Client Risk Segmentation":
         width=800,
         height=800
     )
-
-    st.plotly_chart(fig)
-
+    
+    st.plotly_chart(heatmap)
+    
     st.write("""
-        ### Client Risk Evaluation and Interest Rate Recommendations
-        We're using our random forest model to calculate a new probability of default for all existing clients. 
-        Based on these probabilities, we've also calculated suggested interest rates. 
-        The goal is to improve the management of the company's at-risk clients.
+    ## Client Risk Evaluation and Interest Rate Recommendations
+    We're using our random forest model to calculate a new probability of default for all existing clients. Based on these probabilities, we've also calculated suggested interest rates. The goal is to improve the management of the company's at-risk clients.
     """)
-
+    
     datatable = data[data['probability_of_default'] < 1].assign(
         client=lambda x: x.index + 1,
         home_ownership=lambda x: x['home_ownership_OWN'].map({1: 'OWN', 0: 'RENT'}),
@@ -217,10 +209,3 @@ elif tabs == "Client Risk Segmentation":
     )
 
     st.dataframe(datatable[['client', 'annual_inc', 'term', 'loan_amnt', 'home_ownership', 'delinq_2yrs', 'probability_of_default', 'int_rate', 'suggested_interest_rate']])
-
-if __name__ == '__main__':
-    st.set_page_config(layout="wide")
-    st.write("""
-        # Loan Default Prediction Dashboard
-        This application predicts the probability of loan defaults using machine learning models.
-    """)
