@@ -27,12 +27,25 @@ st.markdown("""
         margin-right: auto;
         width: 50%;
     }
-    .stSelectbox, .stButton button {
+    .stSelectbox div[data-baseweb="select"] {
         background-color: #1B49A4 !important;
         color: white !important;
     }
-    .stSelectbox div[role="option"], .stSelectbox input {
+    .stSelectbox div[data-baseweb="select"] .css-1wy0on6 {
+        background-color: #1B49A4 !important;
+    }
+    .stSelectbox div[data-baseweb="select"] .css-1hb7zxy-IndicatorsContainer {
+        color: white !important;
+    }
+    .stSelectbox div[data-baseweb="select"] .css-1uccc91-singleValue {
+        color: white !important;
+    }
+    .stSelectbox div[data-baseweb="select"] .css-1n7v3ny-option {
         color: black !important;
+    }
+    .stButton button {
+        background-color: #1B49A4 !important;
+        color: white !important;
     }
     </style>
     """, unsafe_allow_html=True)
