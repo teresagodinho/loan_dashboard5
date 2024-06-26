@@ -112,7 +112,7 @@ tabs = ["Main Page", "Background Information", "New Client Default Prediction", 
 selected_tab = st.sidebar.radio("Tabs", tabs)
 
 if selected_tab == "Main Page":
-    st.markdown("<h1 class='title-blue'>Loan Default Prediction Dashboard</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='title-blue'>Main Page</h1>", unsafe_allow_html=True)
     st.write("""
     This dashboard helps a US loan mortgage company identify and manage at-risk clients. Using machine learning models and statistical analysis, it predicts loan defaults and provides actionable insights. Amid rising US mortgage delinquency rates due to economic uncertainty (Financial Times), this tool enables early identification of potential defaults and better management of at-risk clients, ensuring financial stability and improved loan portfolio management.
     """)
