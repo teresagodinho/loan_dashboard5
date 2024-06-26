@@ -52,12 +52,16 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Display the logo
+# Display the logo in the sidebar
 try:
     st.sidebar.image("LendSmart_logo.png", use_column_width=True)
-    st.markdown('<img src="LendSmart_logo.png" class="logo">', unsafe_allow_html=True)
 except Exception as e:
     st.sidebar.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
+
+# Display the logo at the top of the main page
+try:
+    st.markdown('<img src="LendSmart_logo.png" class="logo">', unsafe_allow_html=True)
+except Exception as e:
     st.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
 
 # Data preprocessing
