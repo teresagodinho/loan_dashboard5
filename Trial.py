@@ -25,7 +25,9 @@ st.markdown("""
         display: block;
         margin-left: auto;
         margin-right: auto;
-        width: 200px;  /* Ensure width is not too large */
+        width: 50%;
+        max-width: 200px;
+        height: auto;
     }
     .stSelectbox div[data-baseweb="select"] {
         background-color: #1B49A4 !important;
@@ -58,7 +60,7 @@ except Exception as e:
 
 # Display the logo at the top of the main page
 try:
-    st.markdown('<div style="text-align: center;"><img src="LendSmart_logo.png" class="logo"></div>', unsafe_allow_html=True)
+    st.image("LendSmart_logo.png", width=200)
 except Exception as e:
     st.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
 
