@@ -7,7 +7,7 @@ from imblearn.over_sampling import SMOTE
 import plotly.express as px
 
 # Set Streamlit page configuration
-st.set_page_config(layout="wide", page_title="LendSmart Dashboard", page_icon="LendSmart.png")
+st.set_page_config(layout="wide", page_title="LendSmart Dashboard", page_icon="LendSmart_logo.png")
 
 # Load the dataset
 data = pd.read_csv('loan_balanced_6040.csv')
@@ -32,11 +32,11 @@ st.markdown("""
 
 # Display the logo
 try:
-    st.sidebar.image("LendSmart.png", use_column_width=True)
-    st.image("LendSmart.png", width=200, caption="LendSmart", output_format="PNG")
+    st.sidebar.image("LendSmart_logo.png", use_column_width=True)
+    st.image("LendSmart_logo.png", width=200, caption="LendSmart", output_format="PNG")
 except Exception as e:
-    st.sidebar.write("Logo not found. Please ensure 'LendSmart.png' is in the correct directory.")
-    st.write("Logo not found. Please ensure 'LendSmart.png' is in the correct directory.")
+    st.sidebar.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
+    st.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
 
 # Data preprocessing
 X = data[['annual_inc', 'term', 'loan_amnt', 'home_ownership_OWN']]
