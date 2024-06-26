@@ -27,13 +27,20 @@ st.markdown("""
         margin-right: auto;
         width: 50%;
     }
+    .stSelectbox, .stButton button {
+        background-color: #1B49A4 !important;
+        color: white !important;
+    }
+    .stSelectbox div[role="option"], .stSelectbox input {
+        color: black !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 # Display the logo
 try:
     st.sidebar.image("LendSmart_logo.png", use_column_width=True)
-    st.image("LendSmart_logo.png", width=200, caption="LendSmart", output_format="PNG")
+    st.image("LendSmart_logo.png", width=200,  output_format="PNG")
 except Exception as e:
     st.sidebar.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
     st.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
@@ -177,7 +184,7 @@ elif selected_tab == "Client Risk Segmentation":
                                    aggfunc='mean')
     risk_levels = risk_levels.fillna(0)  # fill NaNs with zeros
 
-    x_labels = [f"${i * 10000}" for i in range(11)]  # generate loan amount bins labels
+    x_labels = [f"${i * 100000}" for i in range(11)]  # generate loan amount bins labels
     y_labels = [f"${i * 100000}" for i in range(11)]  # generate annual income bins labels
 
     heatmap = px.imshow(
