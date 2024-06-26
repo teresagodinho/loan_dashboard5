@@ -31,8 +31,12 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Display the logo
-st.sidebar.image("LendSmart.png", use_column_width=True)
-st.image("LendSmart.png", width=200, caption="LendSmart", output_format="PNG")
+try:
+    st.sidebar.image("LendSmart.png", use_column_width=True)
+    st.image("LendSmart.png", width=200, caption="LendSmart", output_format="PNG")
+except Exception as e:
+    st.sidebar.write("Logo not found. Please ensure 'LendSmart.png' is in the correct directory.")
+    st.write("Logo not found. Please ensure 'LendSmart.png' is in the correct directory.")
 
 # Data preprocessing
 X = data[['annual_inc', 'term', 'loan_amnt', 'home_ownership_OWN']]
