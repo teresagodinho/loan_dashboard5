@@ -26,6 +26,8 @@ st.markdown("""
         margin-left: auto;
         margin-right: auto;
         width: 50%;
+        max-width: 200px;
+        height: auto;
     }
     .stSelectbox div[data-baseweb="select"] {
         background-color: #1B49A4 !important;
@@ -53,7 +55,7 @@ st.markdown("""
 # Display the logo
 try:
     st.sidebar.image("LendSmart_logo.png", use_column_width=True)
-    st.image("LendSmart_logo.png", width=200,  output_format="PNG")
+    st.markdown('<img src="LendSmart_logo.png" class="logo">', unsafe_allow_html=True)
 except Exception as e:
     st.sidebar.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
     st.write("Logo not found. Please ensure 'LendSmart_logo.png' is in the correct directory.")
@@ -218,9 +220,8 @@ elif selected_tab == "Client Risk Segmentation":
     )
 
     st.plotly_chart(heatmap)
-
+    st.markdown("<h1 class='title-blue'>Client Risk Evaluation and Interest Rate Recommendations</h1>", unsafe_allow_html=True)
     st.write("""
-    ## Client Risk Evaluation and Interest Rate Recommendations
     We're using our random forest model to calculate a new probability of default for all existing clients. Based on these probabilities, we've also calculated suggested interest rates. The goal is to improve the management of the company's at-risk clients.
     """)
 
