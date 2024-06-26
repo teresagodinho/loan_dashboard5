@@ -154,12 +154,12 @@ elif selected_tab == "New Client Default Prediction":
     Enter your information to receive a personalized loan recommendation in seconds. Our tool quickly evaluates your eligibility, helping you save time and determine the feasibility of your loan application. If your loan is denied, you will receive a recommendation. If your loan is approved, we will suggest an interest rate.
     """)
 
-    annual_income = st.number_input('Annual Income', value=1200000, min_value=0, max_value=1000000)
+    annual_income = st.number_input('Annual Income', value=120000, min_value=0, max_value=1000000)
     loan_term = st.number_input('Loan Term (months)', value=36, min_value=1, max_value=360)
-    loan_amount = st.number_input('Loan Amount', value=3000000, min_value=0, max_value=10000000)
+    loan_amount = st.number_input('Loan Amount', value=300000, min_value=0, max_value=1000000)
     home_ownership = st.number_input('Home Ownership (OWN=1, RENT=0)', value=1, min_value=0, max_value=1)
-    open_acc = st.number_input('Number of Open Accounts', value=5, min_value=0, max_value=500)
-    delinq_2yrs = st.number_input('Delinquencies in Last 2 Years 1=YES 0=NO', value=0, min_value=0, max_value=500)
+    open_acc = st.number_input('Number of Open Accounts', value=5, min_value=0, max_value=50)
+    delinq_2yrs = st.number_input('Delinquencies in Last 2 Years 1=YES 0=NO', value=0, min_value=0, max_value=50)
 
     if st.button('Predict'):
         input_data = pd.DataFrame({
